@@ -3,7 +3,7 @@ package transport
 import (
 	"context"
 	"encoding/json"
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -11,7 +11,7 @@ import (
 )
 
 func DecodeCreateSupplierRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req domain.CreateSupplierRequest
+	var req requests.CreateSupplierRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
@@ -24,11 +24,11 @@ func DecodeResultsSupplierRequest(_ context.Context, r *http.Request) (interface
 
 func DecodeResultSupplierRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	id := chi.URLParam(r, "id")
-	return domain.ResultSupplierRequest{ID: id}, nil
+	return requests.ResultSupplierRequest{ID: id}, nil
 }
 
 func DecodeUpdateSupplierRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req domain.UpdateSupplierRequest
+	var req requests.UpdateSupplierRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
@@ -41,5 +41,5 @@ func EncodeSupplierResponse(ctx context.Context, w http.ResponseWriter, response
 
 func DecodeDeleteSupplierRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	id := chi.URLParam(r, "id")
-	return domain.DeleteSupplierRequest{ID: id}, nil
+	return requests.DeleteSupplierRequest{ID: id}, nil
 }

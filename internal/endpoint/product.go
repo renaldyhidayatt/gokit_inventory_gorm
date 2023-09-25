@@ -2,8 +2,12 @@ package endpoint
 
 import (
 	"context"
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
+	"go_kit_inventory/internal/domain/responses"
+	"go_kit_inventory/internal/models"
+	"go_kit_inventory/internal/schema"
 	"go_kit_inventory/internal/service"
+	"net/http"
 
 	"github.com/go-kit/kit/endpoint"
 )
@@ -18,49 +22,170 @@ type ProductEndpoints struct {
 
 func NewProductEndpoints(s service.ProductService) ProductEndpoints {
 	return ProductEndpoints{
-		CreateEndpoint:  makeCreateEndpoint(s),
-		ResultsEndpoint: makeResultsEndpoint(s),
-		ResultEndpoint:  makeResultEndpoint(s),
-		DeleteEndpoint:  makeDeleteEndpoint(s),
-		UpdateEndpoint:  makeUpdateEndpoint(s),
+		CreateEndpoint:  makeCreateProductEndpoint(s),
+		ResultsEndpoint: makeResultsProductEndpoint(s),
+		ResultEndpoint:  makeResultProductEndpoint(s),
+		DeleteEndpoint:  makeDeleteProductEndpoint(s),
+		UpdateEndpoint:  makeUpdateProductEndpoint(s),
 	}
 }
-
-func makeCreateEndpoint(s service.ProductService) endpoint.Endpoint {
+func makeCreateProductEndpoint(s service.ProductService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(domain.CreateProductRequest)
+		req := request.(requests.CreateProductRequest)
+
+		if err := req.Validate(); err != nil {
+			return responses.CreateProductResponse{
+				Error:      err,
+				Message:    "Validation failed",
+				StatusCode: http.StatusBadRequest,
+			}, nil
+		}
+
 		product, err := s.Create(&req)
-		return domain.CreateProductResponse{Product: product, Error: err}, nil
+
+		var response responses.CreateProductResponse
+
+		if err != nil {
+			response.Error = err
+			response.Message = "Failed to create product"
+			response.StatusCode = http.StatusInternalServerError
+		} else {
+			convertedProduct := convertToProduct(product)
+			response.Product = convertedProduct
+			response.Message = "Product created successfully"
+			response.StatusCode = http.StatusCreated
+		}
+
+		return response, nil
 	}
 }
 
-func makeResultsEndpoint(s service.ProductService) endpoint.Endpoint {
+func makeResultsProductEndpoint(s service.ProductService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		products, err := s.Results()
-		return domain.ResultsProductResponse{Products: products, Error: err}, nil
+
+		var response responses.ResultsProductResponse
+
+		if err != nil {
+			response.Error = err
+			response.Message = "Failed to fetch products"
+			response.StatusCode = http.StatusInternalServerError
+		} else {
+			var convertedProducts []schema.Product
+			for _, modelProduct := range *products {
+				convertedProduct := convertToProduct(&modelProduct)
+				convertedProducts = append(convertedProducts, *convertedProduct)
+			}
+			response.Products = &convertedProducts
+			response.Message = "Products fetched successfully"
+			response.StatusCode = http.StatusOK
+		}
+
+		return response, nil
 	}
 }
 
-func makeResultEndpoint(s service.ProductService) endpoint.Endpoint {
+func makeResultProductEndpoint(s service.ProductService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(domain.ResultProductRequest)
+		req := request.(requests.ResultProductRequest)
+
+		if err := req.Validate(); err != nil {
+			return responses.ResultProductResponse{
+				Error:      err,
+				Message:    "Validation failed",
+				StatusCode: http.StatusBadRequest,
+			}, nil
+		}
+
 		product, err := s.Result(req.ID)
-		return domain.ResultProductResponse{Product: product, Error: err}, nil
+
+		var response responses.ResultProductResponse
+
+		if err != nil {
+			response.Error = err
+			response.Message = "Failed to fetch product"
+			response.StatusCode = http.StatusNotFound
+		} else {
+			convertedProduct := convertToProduct(product)
+			response.Product = convertedProduct
+			response.Message = "Product fetched successfully"
+			response.StatusCode = http.StatusOK
+		}
+
+		return response, nil
 	}
 }
 
-func makeDeleteEndpoint(s service.ProductService) endpoint.Endpoint {
+func makeDeleteProductEndpoint(s service.ProductService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(domain.DeleteProductRequest)
+		req := request.(requests.DeleteProductRequest)
+
+		if err := req.Validate(); err != nil {
+			return responses.DeleteProductResponse{
+				Error:      err,
+				Message:    "Validation failed",
+				StatusCode: http.StatusBadRequest,
+			}, nil
+		}
+
 		product, err := s.Delete(req.ID)
-		return domain.DeleteProductResponse{Product: product, Error: err}, nil
+
+		var response responses.DeleteProductResponse
+
+		if err != nil {
+			response.Error = err
+			response.Message = "Failed to delete product"
+			response.StatusCode = http.StatusInternalServerError
+		} else {
+			convertedProduct := convertToProduct(product)
+			response.Product = convertedProduct
+			response.Message = "Product deleted successfully"
+			response.StatusCode = http.StatusOK
+		}
+
+		return response, nil
 	}
 }
 
-func makeUpdateEndpoint(s service.ProductService) endpoint.Endpoint {
+func makeUpdateProductEndpoint(s service.ProductService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(domain.UpdateProductRequest)
+		req := request.(requests.UpdateProductRequest)
+
+		if err := req.Validate(); err != nil {
+			return responses.UpdateProductResponse{
+				Error:      err,
+				Message:    "Validation failed",
+				StatusCode: http.StatusBadRequest,
+			}, nil
+		}
+
 		product, err := s.Update(&req)
-		return domain.UpdateProductResponse{Product: product, Error: err}, nil
+
+		var response responses.UpdateProductResponse
+
+		if err != nil {
+			response.Error = err
+			response.Message = "Failed to update product"
+			response.StatusCode = http.StatusInternalServerError
+		} else {
+			convertedProduct := convertToProduct(product)
+			response.Product = convertedProduct
+			response.Message = "Product updated successfully"
+			response.StatusCode = http.StatusOK
+		}
+
+		return response, nil
+	}
+}
+
+func convertToProduct(modelProduct *models.ModelProduct) *schema.Product {
+	return &schema.Product{
+		ID:        modelProduct.ID,
+		Name:      modelProduct.Name,
+		Image:     modelProduct.Image,
+		Qty:       modelProduct.Qty,
+		Category:  schema.Category(modelProduct.Category),
+		CreatedAt: modelProduct.CreatedAt,
+		UpdatedAt: modelProduct.UpdatedAt,
 	}
 }

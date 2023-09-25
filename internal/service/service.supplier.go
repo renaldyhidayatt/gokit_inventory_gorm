@@ -1,7 +1,7 @@
 package service
 
 import (
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"go_kit_inventory/internal/models"
 	"go_kit_inventory/internal/repository"
 )
@@ -14,8 +14,8 @@ func NewServiceSupplier(supplier repository.SupplierRepository) *ServiceSupplier
 	return &ServiceSupplier{Repository: supplier}
 }
 
-func (s *ServiceSupplier) Create(input *domain.CreateSupplierRequest) (*models.ModelSupplier, error) {
-	var supplier domain.CreateSupplierRequest
+func (s *ServiceSupplier) Create(input *requests.CreateSupplierRequest) (*models.ModelSupplier, error) {
+	var supplier requests.CreateSupplierRequest
 	supplier.Name = input.Name
 	supplier.Telepon = input.Telepon
 	supplier.Email = input.Email
@@ -46,8 +46,8 @@ func (s *ServiceSupplier) Delete(id string) (*models.ModelSupplier, error) {
 	return res, err
 }
 
-func (s *ServiceSupplier) Update(input *domain.UpdateSupplierRequest) (*models.ModelSupplier, error) {
-	var supplier domain.UpdateSupplierRequest
+func (s *ServiceSupplier) Update(input *requests.UpdateSupplierRequest) (*models.ModelSupplier, error) {
+	var supplier requests.UpdateSupplierRequest
 
 	supplier.Name = input.Name
 	supplier.Telepon = input.Telepon

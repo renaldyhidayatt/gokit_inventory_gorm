@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -12,7 +12,7 @@ import (
 )
 
 func DecodeCreateProductMasukRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req domain.CreateProductMasukRequest
+	var req requests.CreateProductMasukRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
@@ -28,7 +28,7 @@ func DecodeResultProductMasukRequest(_ context.Context, r *http.Request) (interf
 	if id == "" {
 		return nil, errors.New("missing 'id' parameter")
 	}
-	return domain.ResultProductMasukRequest{ID: id}, nil
+	return requests.ResultProductMasukRequest{ID: id}, nil
 }
 
 func DecodeDeleteProductMasukRequest(_ context.Context, r *http.Request) (interface{}, error) {
@@ -36,11 +36,11 @@ func DecodeDeleteProductMasukRequest(_ context.Context, r *http.Request) (interf
 	if id == "" {
 		return nil, errors.New("missing 'id' parameter")
 	}
-	return domain.DeleteProductMasukRequest{ID: id}, nil
+	return requests.DeleteProductMasukRequest{ID: id}, nil
 }
 
 func DecodeUpdateProductMasukRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req domain.UpdateProductMasukRequest
+	var req requests.UpdateProductMasukRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}

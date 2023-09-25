@@ -3,7 +3,7 @@ package transport
 import (
 	"context"
 	"encoding/json"
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -11,7 +11,7 @@ import (
 )
 
 func DecodeCreateSaleRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req domain.CreateSaleRequest
+	var req requests.CreateSaleRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
@@ -24,11 +24,11 @@ func DecodeResultsSaleRequest(_ context.Context, r *http.Request) (interface{}, 
 
 func DecodeResultSaleRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	id := chi.URLParam(r, "id")
-	return domain.ResultSaleRequest{ID: id}, nil
+	return requests.ResultSaleRequest{ID: id}, nil
 }
 
 func DecodeUpdateSaleRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req domain.UpdateSaleRequest
+	var req requests.UpdateSaleRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
@@ -41,5 +41,5 @@ func EncodeSaleResponse(ctx context.Context, w http.ResponseWriter, response int
 
 func DecodeDeleteSaleRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	id := chi.URLParam(r, "id")
-	return domain.DeleteSaleRequest{ID: id}, nil
+	return requests.DeleteSaleRequest{ID: id}, nil
 }

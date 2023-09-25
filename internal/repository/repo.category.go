@@ -2,6 +2,7 @@ package repository
 
 import (
 	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"go_kit_inventory/internal/models"
 
 	"gorm.io/gorm"
@@ -15,7 +16,7 @@ func NewRepositoryCategory(db *gorm.DB) *repositoryCategory {
 	return &repositoryCategory{db: db}
 }
 
-func (r *repositoryCategory) Create(input *domain.CreateCategoryRequest) (*models.ModelCategory, error) {
+func (r *repositoryCategory) Create(input *requests.CreateCategoryRequest) (*models.ModelCategory, error) {
 	var category models.ModelCategory
 
 	category.Name = input.Name
@@ -90,7 +91,7 @@ func (r *repositoryCategory) Delete(id string) (*models.ModelCategory, error) {
 	return &category, nil
 }
 
-func (r *repositoryCategory) Update(input *domain.UpdateCategoryRequest) (*models.ModelCategory, error) {
+func (r *repositoryCategory) Update(input *requests.UpdateCategoryRequest) (*models.ModelCategory, error) {
 	var category models.ModelCategory
 
 	category.ID = input.ID

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"go_kit_inventory/internal/models"
 
 	"gorm.io/gorm"
@@ -15,7 +16,7 @@ func NewRepositorySupplier(db *gorm.DB) *repositorySupplier {
 	return &repositorySupplier{db: db}
 }
 
-func (r *repositorySupplier) Create(input *domain.CreateSupplierRequest) (*models.ModelSupplier, error) {
+func (r *repositorySupplier) Create(input *requests.CreateSupplierRequest) (*models.ModelSupplier, error) {
 	var supplier models.ModelSupplier
 
 	supplier.Name = input.Name
@@ -93,7 +94,7 @@ func (r *repositorySupplier) Delete(id string) (*models.ModelSupplier, error) {
 	return &supplier, nil
 }
 
-func (r *repositorySupplier) Update(input *domain.UpdateSupplierRequest) (*models.ModelSupplier, error) {
+func (r *repositorySupplier) Update(input *requests.UpdateSupplierRequest) (*models.ModelSupplier, error) {
 	var supplier models.ModelSupplier
 
 	supplier.ID = input.ID

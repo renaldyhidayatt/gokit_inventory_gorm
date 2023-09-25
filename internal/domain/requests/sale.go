@@ -1,10 +1,6 @@
-package domain
+package requests
 
-import (
-	"go_kit_inventory/internal/models"
-
-	"github.com/go-playground/validator/v10"
-)
+import "github.com/go-playground/validator/v10"
 
 type CreateSaleRequest struct {
 	Name    string `json:"name" validate:"required,lowercase" schema:"name"`
@@ -43,35 +39,32 @@ func (c *UpdateSaleRequest) Validate() error {
 	return nil
 }
 
-type CreateSaleResponse struct {
-	Sale  *models.ModelSale `json:"sale,omitempty"`
-	Error error             `json:"error,omitempty"`
-}
-
-type ResultsSaleResponse struct {
-	Sales []models.ModelSale `json:"sales,omitempty"`
-	Error error              `json:"error,omitempty"`
-}
-
-type ResultSaleResponse struct {
-	Sale  *models.ModelSale `json:"sale,omitempty"`
-	Error error             `json:"error,omitempty"`
-}
-
 type ResultSaleRequest struct {
-	ID string `json:"id"`
+	ID string `json:"id" validate:"required,uuid"`
+}
+
+func (c *ResultSaleRequest) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(c)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type DeleteSaleRequest struct {
-	ID string `json:"id"`
+	ID string `json:"id" validate:"required,uuid"`
 }
 
-type DeleteSaleResponse struct {
-	Sale  *models.ModelSale `json:"sale,omitempty"`
-	Error error             `json:"error,omitempty"`
-}
+func (c *DeleteSaleRequest) Validate() error {
+	validate := validator.New()
 
-type UpdateSaleResponse struct {
-	Sale  *models.ModelSale `json:"sale,omitempty"`
-	Error error             `json:"error,omitempty"`
+	err := validate.Struct(c)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"go_kit_inventory/internal/models"
 
 	"gorm.io/gorm"
@@ -15,7 +16,7 @@ func NewRepositoryUser(db *gorm.DB) *repositoryUser {
 	return &repositoryUser{db: db}
 }
 
-func (r *repositoryUser) Register(input *domain.RegisterInput) (*models.ModelUser, error) {
+func (r *repositoryUser) Register(input *requests.RegisterRequest) (*models.ModelUser, error) {
 	var user models.ModelUser
 	user.FirstName = input.FirstName
 	user.LastName = input.LastName
@@ -39,7 +40,7 @@ func (r *repositoryUser) Register(input *domain.RegisterInput) (*models.ModelUse
 	return &user, nil
 }
 
-func (r *repositoryUser) Login(input *domain.LoginInput) (*models.ModelUser, error) {
+func (r *repositoryUser) Login(input *requests.LoginRequest) (*models.ModelUser, error) {
 	var user models.ModelUser
 	user.Email = input.Email
 	user.Password = input.Password
@@ -115,7 +116,7 @@ func (r *repositoryUser) FindByEmail(email string) (*models.ModelUser, error) {
 	return &user, nil
 }
 
-func (r *repositoryUser) Update(input *domain.UpdateUserRequest) (*models.ModelUser, error) {
+func (r *repositoryUser) Update(input *requests.UpdateUserRequest) (*models.ModelUser, error) {
 	var user models.ModelUser
 
 	user.ID = input.ID

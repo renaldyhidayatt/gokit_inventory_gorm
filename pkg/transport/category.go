@@ -3,7 +3,7 @@ package transport
 import (
 	"context"
 	"encoding/json"
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -11,7 +11,7 @@ import (
 )
 
 func DecodeCreateCategoryRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var request domain.CreateCategoryRequest
+	var request requests.CreateCategoryRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}
@@ -19,21 +19,21 @@ func DecodeCreateCategoryRequest(_ context.Context, r *http.Request) (interface{
 }
 
 func DecodeResultsCategoryRequest(_ context.Context, _ *http.Request) (interface{}, error) {
-	return nil, nil // No specific decoding needed for this request
+	return nil, nil
 }
 
 func DecodeResultCategoryRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	id := chi.URLParam(r, "id")
-	return domain.ResultCategoryRequest{ID: id}, nil
+	return requests.ResultCategoryRequest{ID: id}, nil
 }
 
 func DecodeDeleteCategoryRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	id := chi.URLParam(r, "id")
-	return domain.DeleteCategoryRequest{ID: id}, nil
+	return requests.DeleteCategoryRequest{ID: id}, nil
 }
 
 func DecodeUpdateCategoryRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var request domain.UpdateCategoryRequest
+	var request requests.UpdateCategoryRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}

@@ -1,13 +1,13 @@
-package domain
+package requests
 
 import "github.com/go-playground/validator/v10"
 
-type LoginInput struct {
+type LoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,gte=8"`
 }
 
-func (l *LoginInput) Validate() error {
+func (l *LoginRequest) Validate() error {
 	validate := validator.New()
 
 	err := validate.Struct(l)
@@ -19,7 +19,7 @@ func (l *LoginInput) Validate() error {
 	return nil
 }
 
-type RegisterInput struct {
+type RegisterRequest struct {
 	FirstName string `json:"firstname" validate:"required,lowercase"`
 	LastName  string `json:"lastname" validate:"required,lowercase"`
 	Email     string `json:"email" validate:"required,email"`
@@ -27,7 +27,7 @@ type RegisterInput struct {
 	Role      string `json:"role" validate:"required,lowercase"`
 }
 
-func (c *RegisterInput) Validate() error {
+func (c *RegisterRequest) Validate() error {
 	validate := validator.New()
 
 	err := validate.Struct(c)

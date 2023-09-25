@@ -1,7 +1,7 @@
 package service
 
 import (
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"go_kit_inventory/internal/models"
 	"go_kit_inventory/internal/repository"
 )
@@ -14,8 +14,8 @@ func NewServiceCustomer(customer repository.CustomerRepository) *ServiceCustomer
 	return &ServiceCustomer{Repository: customer}
 }
 
-func (s *ServiceCustomer) Create(input *domain.CreateCustomerRequest) (*models.ModelCustomer, error) {
-	var customer domain.CreateCustomerRequest
+func (s *ServiceCustomer) Create(input *requests.CreateCustomerRequest) (*models.ModelCustomer, error) {
+	var customer requests.CreateCustomerRequest
 
 	customer.Name = input.Name
 	customer.Telepon = input.Telepon
@@ -47,8 +47,8 @@ func (s *ServiceCustomer) Delete(id string) (*models.ModelCustomer, error) {
 	return res, err
 }
 
-func (s *ServiceCustomer) Update(input *domain.UpdateCustomerRequest) (*models.ModelCustomer, error) {
-	var customer domain.UpdateCustomerRequest
+func (s *ServiceCustomer) Update(input *requests.UpdateCustomerRequest) (*models.ModelCustomer, error) {
+	var customer requests.UpdateCustomerRequest
 
 	customer.Name = input.Name
 	customer.Telepon = input.Telepon

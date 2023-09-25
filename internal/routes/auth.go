@@ -11,7 +11,7 @@ import (
 )
 
 func (h *HandlerRoute) NewAuthRoutes(prefix string, db *gorm.DB, router *chi.Mux) {
-	endpoint := endpoint.MakeUserEndpoints(h.services.User)
+	endpoint := endpoint.UserEndpoints(h.services.User)
 
 	router.Route(prefix, func(r chi.Router) {
 		r.Method(http.MethodPost, "/register", httptransport.NewServer(

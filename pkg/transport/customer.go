@@ -3,7 +3,7 @@ package transport
 import (
 	"context"
 	"encoding/json"
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -11,7 +11,7 @@ import (
 )
 
 func DecodeCreateCustomerRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var request domain.CreateCustomerRequest
+	var request requests.CreateCustomerRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}
@@ -19,21 +19,21 @@ func DecodeCreateCustomerRequest(_ context.Context, r *http.Request) (interface{
 }
 
 func DecodeResultsCustomerRequest(_ context.Context, _ *http.Request) (interface{}, error) {
-	return nil, nil // No specific decoding needed for this request
+	return nil, nil
 }
 
 func DecodeResultCustomerRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	id := chi.URLParam(r, "id")
-	return domain.ResultCustomerRequest{ID: id}, nil
+	return requests.ResultCustomerRequest{ID: id}, nil
 }
 
 func DecodeDeleteCustomerRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	id := chi.URLParam(r, "id")
-	return domain.DeleteCustomerRequest{ID: id}, nil
+	return requests.DeleteCustomerRequest{ID: id}, nil
 }
 
 func DecodeUpdateCustomerRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var request domain.UpdateCustomerRequest
+	var request requests.UpdateCustomerRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		return nil, err
 	}

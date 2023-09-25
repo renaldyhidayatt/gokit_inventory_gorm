@@ -1,7 +1,7 @@
 package service
 
 import (
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"go_kit_inventory/internal/models"
 	"go_kit_inventory/internal/repository"
 )
@@ -14,8 +14,8 @@ func NewServiceProductKeluar(productkeluar repository.ProductKeluarRepository) *
 	return &ServiceProductKeluar{Repository: productkeluar}
 }
 
-func (s *ServiceProductKeluar) Create(input *domain.CreateProductKeluarRequest) (*models.ModelProductKeluar, error) {
-	var productkeluar domain.CreateProductKeluarRequest
+func (s *ServiceProductKeluar) Create(input *requests.CreateProductKeluarRequest) (*models.ModelProductKeluar, error) {
+	var productkeluar requests.CreateProductKeluarRequest
 
 	productkeluar.Qty = input.Qty
 	productkeluar.ProductID = input.ProductID
@@ -46,8 +46,8 @@ func (s *ServiceProductKeluar) Delete(id string) (*models.ModelProductKeluar, er
 	return res, err
 }
 
-func (s *ServiceProductKeluar) Update(input *domain.UpdateProductKeluarRequest) (*models.ModelProductKeluar, error) {
-	var productkeluar domain.UpdateProductKeluarRequest
+func (s *ServiceProductKeluar) Update(input *requests.UpdateProductKeluarRequest) (*models.ModelProductKeluar, error) {
+	var productkeluar requests.UpdateProductKeluarRequest
 
 	productkeluar.Qty = input.Qty
 	productkeluar.ProductID = input.ProductID

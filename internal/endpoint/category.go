@@ -2,8 +2,12 @@ package endpoint
 
 import (
 	"context"
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
+	"go_kit_inventory/internal/domain/responses"
+	"go_kit_inventory/internal/models"
+	"go_kit_inventory/internal/schema"
 	"go_kit_inventory/internal/service"
+	"net/http"
 
 	"github.com/go-kit/kit/endpoint"
 )
@@ -18,49 +22,168 @@ type CategoryEndpoint struct {
 
 func NewCategoryEndpoints(s service.CategoryService) CategoryEndpoint {
 	return CategoryEndpoint{
-		CreateEndpoint:  MakeCreateCategoryEndpoint(s),
-		ResultsEndpoint: MakeResultsCategoryEndpoint(s),
-		ResultEndpoint:  MakeResultCategoryEndpoint(s),
-		DeleteEndpoint:  MakeDeleteCategoryEndpoint(s),
-		UpdateEndpoint:  MakeUpdateCategoryEndpoint(s),
+		CreateEndpoint:  makeCreateCategoryEndpoint(s),
+		ResultsEndpoint: makeResultsCategoryEndpoint(s),
+		ResultEndpoint:  makeResultCategoryEndpoint(s),
+		DeleteEndpoint:  makeDeleteCategoryEndpoint(s),
+		UpdateEndpoint:  makeUpdateCategoryEndpoint(s),
 	}
 }
 
-func MakeCreateCategoryEndpoint(s service.CategoryService) endpoint.Endpoint {
+func makeCreateCategoryEndpoint(s service.CategoryService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(domain.CreateCategoryRequest)
+		req := request.(requests.CreateCategoryRequest)
+
+		if err := req.Validate(); err != nil {
+			return responses.CreateCategoryResponse{
+				Error:      err,
+				Message:    "Validation failed",
+				StatusCode: http.StatusBadRequest,
+			}, nil
+		}
+
 		category, err := s.Create(&req)
-		return domain.CreateCategoryResponse{Category: category, Error: err}, nil
+
+		var response responses.CreateCategoryResponse
+
+		if err != nil {
+			response.Error = err
+			response.Message = "Failed to create category"
+			response.StatusCode = http.StatusInternalServerError
+		} else {
+			convert := convertToCategory(category)
+			response.Category = convert
+			response.Message = "Category created successfully"
+			response.StatusCode = http.StatusCreated
+		}
+
+		return response, nil
 	}
 }
 
-func MakeResultsCategoryEndpoint(s service.CategoryService) endpoint.Endpoint {
+func makeResultsCategoryEndpoint(s service.CategoryService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		categories, err := s.Results()
-		return domain.ResultsCategoryResponse{Categories: *categories, Error: err}, nil
+
+		var response responses.ResultsCategoryResponse
+
+		if err != nil {
+			response.Error = err
+			response.Message = "Failed to fetch categories"
+			response.StatusCode = http.StatusInternalServerError
+		} else {
+			var convertedCategories []schema.Category
+			for _, modelCategory := range *categories {
+				convertedCategory := convertToCategory(&modelCategory)
+				convertedCategories = append(convertedCategories, *convertedCategory)
+			}
+			response.Categories = &convertedCategories
+			response.Message = "Categories fetched successfully"
+			response.StatusCode = http.StatusOK
+		}
+
+		return response, nil
 	}
 }
 
-func MakeResultCategoryEndpoint(s service.CategoryService) endpoint.Endpoint {
+func makeResultCategoryEndpoint(s service.CategoryService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(domain.ResultCategoryRequest)
+		req := request.(requests.ResultCategoryRequest)
+
+		if err := req.Validate(); err != nil {
+			return responses.ResultCategoryResponse{
+				Error:      err,
+				Message:    "Validation failed",
+				StatusCode: http.StatusBadRequest,
+			}, nil
+		}
+
 		category, err := s.Result(req.ID)
-		return domain.ResultCategoryResponse{Category: category, Error: err}, nil
+
+		var response responses.ResultCategoryResponse
+
+		if err != nil {
+			response.Error = err
+			response.Message = "Failed to fetch category"
+			response.StatusCode = http.StatusNotFound
+		} else {
+			convert := convertToCategory(category)
+			response.Category = convert
+			response.Message = "Category fetched successfully"
+			response.StatusCode = http.StatusOK
+		}
+
+		return response, nil
 	}
 }
 
-func MakeDeleteCategoryEndpoint(s service.CategoryService) endpoint.Endpoint {
+func makeDeleteCategoryEndpoint(s service.CategoryService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(domain.DeleteCategoryRequest)
+		req := request.(requests.DeleteCategoryRequest)
+
+		if err := req.Validate(); err != nil {
+			return responses.DeleteCategoryResponse{
+				Error:      err,
+				Message:    "Validation failed",
+				StatusCode: http.StatusBadRequest,
+			}, nil
+		}
+
 		category, err := s.Delete(req.ID)
-		return domain.DeleteCategoryResponse{Category: category, Error: err}, nil
+
+		var response responses.DeleteCategoryResponse
+
+		if err != nil {
+			response.Error = err
+			response.Message = "Failed to delete category"
+			response.StatusCode = http.StatusInternalServerError
+		} else {
+			convert := convertToCategory(category)
+			response.Category = convert
+			response.Message = "Category deleted successfully"
+			response.StatusCode = http.StatusOK
+		}
+
+		return response, nil
 	}
 }
 
-func MakeUpdateCategoryEndpoint(s service.CategoryService) endpoint.Endpoint {
+func makeUpdateCategoryEndpoint(s service.CategoryService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(domain.UpdateCategoryRequest)
+		req := request.(requests.UpdateCategoryRequest)
+
+		if err := req.Validate(); err != nil {
+			return responses.UpdateCategoryResponse{
+				Error:      err,
+				Message:    "Validation failed",
+				StatusCode: http.StatusBadRequest,
+			}, nil
+		}
+
 		category, err := s.Update(&req)
-		return domain.UpdateCategoryResponse{Category: category, Error: err}, nil
+
+		var response responses.UpdateCategoryResponse
+
+		if err != nil {
+			response.Error = err
+			response.Message = "Failed to update category"
+			response.StatusCode = http.StatusInternalServerError
+		} else {
+			convert := convertToCategory(category)
+			response.Category = convert
+			response.Message = "Category updated successfully"
+			response.StatusCode = http.StatusOK
+		}
+
+		return response, nil
+	}
+}
+
+func convertToCategory(modelCategory *models.ModelCategory) *schema.Category {
+	return &schema.Category{
+		ID:        modelCategory.ID,
+		Name:      modelCategory.Name,
+		CreatedAt: modelCategory.CreatedAt,
+		UpdatedAt: modelCategory.UpdatedAt,
 	}
 }

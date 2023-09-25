@@ -1,7 +1,7 @@
 package service
 
 import (
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"go_kit_inventory/internal/models"
 	"go_kit_inventory/internal/repository"
 )
@@ -14,8 +14,8 @@ func NewServiceCategory(category repository.CategoryRepository) *ServiceCategory
 	return &ServiceCategory{Repository: category}
 }
 
-func (s *ServiceCategory) Create(input *domain.CreateCategoryRequest) (*models.ModelCategory, error) {
-	var category domain.CreateCategoryRequest
+func (s *ServiceCategory) Create(input *requests.CreateCategoryRequest) (*models.ModelCategory, error) {
+	var category requests.CreateCategoryRequest
 
 	category.Name = input.Name
 
@@ -43,8 +43,8 @@ func (s *ServiceCategory) Delete(id string) (*models.ModelCategory, error) {
 	return res, err
 }
 
-func (s *ServiceCategory) Update(input *domain.UpdateCategoryRequest) (*models.ModelCategory, error) {
-	var category domain.UpdateCategoryRequest
+func (s *ServiceCategory) Update(input *requests.UpdateCategoryRequest) (*models.ModelCategory, error) {
+	var category requests.UpdateCategoryRequest
 
 	category.ID = input.ID
 	category.Name = input.Name

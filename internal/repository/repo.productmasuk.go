@@ -2,6 +2,7 @@ package repository
 
 import (
 	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"go_kit_inventory/internal/models"
 
 	"gorm.io/gorm"
@@ -15,7 +16,7 @@ func NewRepositoryProductMasuk(db *gorm.DB) *repositoryProductMasuk {
 	return &repositoryProductMasuk{db: db}
 }
 
-func (r *repositoryProductMasuk) Create(input *domain.CreateProductMasukRequest) (*models.ModelProductMasuk, error) {
+func (r *repositoryProductMasuk) Create(input *requests.CreateProductMasukRequest) (*models.ModelProductMasuk, error) {
 	var productmasuk models.ModelProductMasuk
 
 	productmasuk.Name = input.Name
@@ -88,7 +89,7 @@ func (r *repositoryProductMasuk) Delete(id string) (*models.ModelProductMasuk, e
 	return &productmasuk, nil
 }
 
-func (r *repositoryProductMasuk) Update(input *domain.UpdateProductMasukRequest) (*models.ModelProductMasuk, error) {
+func (r *repositoryProductMasuk) Update(input *requests.UpdateProductMasukRequest) (*models.ModelProductMasuk, error) {
 	var productmasuk models.ModelProductMasuk
 
 	productmasuk.ID = input.ID

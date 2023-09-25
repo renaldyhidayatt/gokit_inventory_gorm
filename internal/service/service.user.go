@@ -2,9 +2,10 @@ package service
 
 import (
 	"fmt"
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"go_kit_inventory/internal/models"
 	"go_kit_inventory/internal/repository"
+	"go_kit_inventory/internal/schema"
 	"go_kit_inventory/pkg/security"
 )
 
@@ -18,9 +19,9 @@ func NewServiceUser(auth repository.UserRepository, hash security.Hashing, token
 	return &ServiceUser{Repository: auth, Hash: hash, Token: token}
 }
 
-func (s *ServiceUser) Register(input *domain.RegisterInput) (*models.ModelUser, error) {
+func (s *ServiceUser) Register(input *requests.RegisterRequest) (*models.ModelUser, error) {
 
-	var schema domain.RegisterInput
+	var schema requests.RegisterRequest
 
 	passwordHash, err := s.Hash.HashPassword(input.Password)
 
@@ -39,36 +40,36 @@ func (s *ServiceUser) Register(input *domain.RegisterInput) (*models.ModelUser, 
 	return res, err
 }
 
-func (s *ServiceUser) Login(input *domain.LoginInput) (domain.Token, error) {
-	var schema domain.LoginInput
+func (s *ServiceUser) Login(input *requests.LoginRequest) (schema.Token, error) {
+	var request requests.LoginRequest
 
-	res, err := s.Repository.FindByEmail(input.Email)
+	res, err := s.Repository.FindByEmail(request.Email)
 
 	if err != nil {
-		return domain.Token{}, fmt.Errorf("failed error %w", err)
+		return schema.Token{}, fmt.Errorf("failed error %w", err)
 	}
 
 	err = s.Hash.ComparePassword(res.Password, input.Password)
 
 	if err != nil {
-		return domain.Token{}, fmt.Errorf("failed error :%w", err)
+		return schema.Token{}, fmt.Errorf("failed error :%w", err)
 	}
 
-	schema.Email = input.Email
-	schema.Password = res.Password
+	request.Email = input.Email
+	request.Password = res.Password
 
-	res, err = s.Repository.Login(&schema)
+	res, err = s.Repository.Login(&request)
 
 	if err != nil {
-		return domain.Token{}, err
+		return schema.Token{}, err
 	}
 
 	return s.createJwt(res.ID)
 }
 
-func (s *ServiceUser) createJwt(id string) (domain.Token, error) {
+func (s *ServiceUser) createJwt(id string) (schema.Token, error) {
 	var (
-		res domain.Token
+		res schema.Token
 		err error
 	)
 
@@ -101,8 +102,8 @@ func (s *ServiceUser) Delete(id string) (*models.ModelUser, error) {
 	return res, err
 }
 
-func (s *ServiceUser) Update(input *domain.UpdateUserRequest) (*models.ModelUser, error) {
-	var user domain.UpdateUserRequest
+func (s *ServiceUser) Update(input *requests.UpdateUserRequest) (*models.ModelUser, error) {
+	var user requests.UpdateUserRequest
 
 	user.ID = input.ID
 

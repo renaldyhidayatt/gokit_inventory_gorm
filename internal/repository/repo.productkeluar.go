@@ -2,6 +2,7 @@ package repository
 
 import (
 	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"go_kit_inventory/internal/models"
 
 	"gorm.io/gorm"
@@ -15,7 +16,7 @@ func NewRepositoryProductKeluar(db *gorm.DB) *repositoryProductKeluar {
 	return &repositoryProductKeluar{db: db}
 }
 
-func (r *repositoryProductKeluar) Create(input *domain.CreateProductKeluarRequest) (*models.ModelProductKeluar, error) {
+func (r *repositoryProductKeluar) Create(input *requests.CreateProductKeluarRequest) (*models.ModelProductKeluar, error) {
 	var productkeluar models.ModelProductKeluar
 
 	productkeluar.Qty = input.Qty
@@ -79,7 +80,7 @@ func (r *repositoryProductKeluar) Delete(id string) (*models.ModelProductKeluar,
 	return &productkeluar, nil
 }
 
-func (r *repositoryProductKeluar) Update(input *domain.UpdateProductKeluarRequest) (*models.ModelProductKeluar, error) {
+func (r *repositoryProductKeluar) Update(input *requests.UpdateProductKeluarRequest) (*models.ModelProductKeluar, error) {
 	var productkeluar models.ModelProductKeluar
 
 	productkeluar.ID = input.ID

@@ -1,19 +1,37 @@
-package domain
+package requests
 
-import (
-	"go_kit_inventory/internal/models"
-
-	"github.com/go-playground/validator/v10"
-)
+import "github.com/go-playground/validator/v10"
 
 type ResultsUserRequest struct{}
 
 type ResultUserRequest struct {
-	ID string
+	ID string `json:"id" validate:"uuid"`
 }
 
 type DeleteUserRequest struct {
-	ID string
+	ID string `json:"id" validate:"uuid"`
+}
+
+func (c *ResultUserRequest) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(c)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *DeleteUserRequest) Validate() error {
+	validate := validator.New()
+
+	err := validate.Struct(c)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type UpdateUserRequest struct {
@@ -34,28 +52,4 @@ func (c *UpdateUserRequest) Validate() error {
 	}
 
 	return nil
-}
-
-type RegisterResponse struct {
-	User *models.ModelUser `json:"user,omitempty"`
-}
-
-type LoginResponse struct {
-	Token Token `json:"token,omitempty"`
-}
-
-type ResultsResponse struct {
-	Users *[]models.ModelUser `json:"users,omitempty"`
-}
-
-type ResultResponse struct {
-	User *models.ModelUser `json:"user,omitempty"`
-}
-
-type UpdateResponse struct {
-	User *models.ModelUser `json:"user,omitempty"`
-}
-
-type DeleteUserResponse struct {
-	User *models.ModelUser `json:"user,omitempty"`
 }

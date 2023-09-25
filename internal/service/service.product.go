@@ -1,7 +1,7 @@
 package service
 
 import (
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"go_kit_inventory/internal/models"
 	"go_kit_inventory/internal/repository"
 )
@@ -14,8 +14,8 @@ func NewServiceProduct(product repository.ProductRepository) *ServiceProduct {
 	return &ServiceProduct{Repository: product}
 }
 
-func (s *ServiceProduct) Create(input *domain.CreateProductRequest) (*models.ModelProduct, error) {
-	var product domain.CreateProductRequest
+func (s *ServiceProduct) Create(input *requests.CreateProductRequest) (*models.ModelProduct, error) {
+	var product requests.CreateProductRequest
 
 	product.Name = input.Name
 	product.Image = input.Image
@@ -46,8 +46,8 @@ func (s *ServiceProduct) Delete(id string) (*models.ModelProduct, error) {
 	return res, err
 }
 
-func (s *ServiceProduct) Update(input *domain.UpdateProductRequest) (*models.ModelProduct, error) {
-	var product domain.UpdateProductRequest
+func (s *ServiceProduct) Update(input *requests.UpdateProductRequest) (*models.ModelProduct, error) {
+	var product requests.UpdateProductRequest
 
 	product.Name = input.Name
 	product.Image = input.Image

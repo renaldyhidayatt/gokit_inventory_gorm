@@ -3,7 +3,7 @@ package transport
 import (
 	"context"
 	"encoding/json"
-	"go_kit_inventory/internal/domain"
+	"go_kit_inventory/internal/domain/requests"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -11,7 +11,7 @@ import (
 )
 
 func DecodeCreateProductKeluarRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req domain.CreateProductKeluarRequest
+	var req requests.CreateProductKeluarRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
@@ -29,11 +29,11 @@ func DecodeResultsProductkeluarRequest(_ context.Context, r *http.Request) (inte
 func DecodeResultProductKeluarRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	id := chi.URLParam(r, "id")
 
-	return domain.ResultProductRequest{ID: id}, nil
+	return requests.ResultProductRequest{ID: id}, nil
 }
 
 func DecodeUpdateProductKeluarRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req domain.UpdateProductRequest
+	var req requests.UpdateProductRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
@@ -46,5 +46,5 @@ func EncodeProductKeluarResponse(ctx context.Context, w http.ResponseWriter, res
 
 func DecodeDeleteProductKeluarRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	id := chi.URLParam(r, "id")
-	return domain.DeleteProductRequest{ID: id}, nil
+	return requests.DeleteProductRequest{ID: id}, nil
 }
